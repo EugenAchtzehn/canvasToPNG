@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+      integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC"
+      crossorigin="anonymous"
+    />
+    <script src="https://unpkg.com/vue@3"></script>
+    <title>ROI擷取</title>
+  </head>
+
+  <body>
+    <div id="app" class="container">
+      <h1>ROI產框</h1>
+      <canvas id="canvas" width="704" height="480"></canvas>
+      <div class="row mt-2">
+        <div class="col-sm-3">
+          <div class="relocateSec">
+            <label for="toTop" class="form-label">Top (px) </label>
+            <input type="number" id="toTop" class="form-control" />
+            <label for="toLeft" class="form-label">Left (px) </label>
+            <input type="number" id="toLeft" class="form-control" />
+          </div>
+        </div>
+        <div class="col-sm-3">
+          <div class="resizeSec">
+            <label for="rectWidth" class="form-label">寬度 (px) </label>
+            <input type="number" id="rectWidth" class="form-control" />
+            <label for="rectHeight" class="form-label">高度 (px) </label>
+            <input type="number" id="rectHeight" class="form-control" />
+          </div>
+        </div>
+        <div class="col-sm-3">
+          <div class="textSec">
+            <label for="textContent" class="form-label">Text: </label>
+            <input id="textContent" type="text" class="form-control" placeholder="請輸入文字" />
+          </div>
+        </div>
+      </div>
+
+      <div class="controlSec mt-3 row">
+        <div class="col-sm-1">
+          <button type="button" id="generate" class="btn btn-outline-success">產圖</button>
+        </div>
+        <div class="col-sm-1">
+          <button type="button" id="save" class="btn btn-outline-primary">存檔</button>
+        </div>
+      </div>
+      <a class="mt-4 d-block" target="_blank" href="https://codepen.io/fdb/pen/ExVbONw">
+        Thanks to Frederik De Bleser's Ref.
+      </a>
+    </div>
+  </body>
+
+  <style>
+    /* body {
+      font-family: Arial, Helvetica, sans-serif;
+    } */
+    canvas {
+      border: 1px solid #003300;
+    }
+  </style>
+
+  <script>
+    const { createApp } = Vue;
+
+    createApp({
+      data() {
+        return {
+          // leftOffset: 10,
+          // topOffset: 10,
+          // rectHeight: 30,
+          // rectWidth: 100,
+          // textVal: '',
+        };
+      },
+      methods: {
+        // onGenerate() {
+        //   console.log('generated!');
+        // },
+        // onSave() {},
+      },
+    }).mount('#app');
+
+    const canvas = document.querySelector('#canvas');
+    const getContext = canvas.getContext('2d');
+
+    const toTop = document.querySelector('#toTop');
+    const toLeft = document.querySelector('#toLeft');
+
+    const rectWidth = document.querySelector('#rectWidth');
+    const rectHeight = document.querySelector('#rectHeight');
+
+    const textContent = document.querySelector('#textContent');
+
+    const generate = document.querySelector('#generate');
+    const save = document.querySelector('#save');
+
+    generate.addEventListener('click', onGenerateHandler);
+    save.addEventListener('click', onSaveHandler);
+
+    function onSaveHandler() {
+      console.log('saved!');
+      const canvas = document.getElementById('canvas');
+      const gtContext = canvas.getContext('2d');
+      canvas.toBlob((blob) => {
+        // 產生時間戳記
+        const timestamp = Date.now().toString();
+        // 建立一個 <a></a>
+        const a = document.createElement('a');
+        document.body.append(a);
+        a.download = `export-${timestamp}.png`;
+        a.href = URL.createObjectURL(blob);
+        a.click();
+        a.remove();
+        // console.log(URL.createObjectURL(blob));
+      });
+    }
+
+    function onGenerateHandler() {
+      // console.log('generate button triggered!');
+      let leftOffset = Number(toLeft.value) || 10;
+      let topOffset = Number(toTop.value) || 10;
+      let xPixel = Number(rectWidth.value) || 100;
+      let yPixel = Number(rectHeight.value) || 20;
+      let textVal = textContent.value || 'default text';
+
+      getContext.strokeStyle = 'red';
+      getContext.lineWidth = 3;
+      getContext.strokeRect(leftOffset, topOffset, xPixel, yPixel);
+
+      // console.log(textVal);
+
+      getContext.font = '30px Arial';
+      getContext.fillStyle = 'red';
+      getContext.fillText(textVal, leftOffset, topOffset + yPixel + 30);
+    }
+  </script>
+</html>
