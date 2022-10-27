@@ -18,6 +18,7 @@
       integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC"
       crossorigin="anonymous"
     />
+
     <title>ROI擷取</title>
   </head>
 
@@ -44,11 +45,32 @@
         </div>
         <div class="col-sm-3">
           <div class="textSec">
-            <label for="textContent" class="form-label">Text: </label>
-            <input id="textContent" type="text" class="form-control" v-model="textContentVal" />
+            <label for="textContent" class="form-label outline-danger">Text: </label>
+            <input
+              id="textContent"
+              type="text"
+              class="form-control border border-warning"
+              v-model="textContentVal"
+            />
             <label for="leftShift" class="form-label">字往左移 (px)</label>
             <input type="number" id="leftShift" class="form-control" v-model="leftShiftPixel" />
           </div>
+        </div>
+        <div class="col-sm-3">
+          <label for="outlineColor" class="form-label">文字框線顏色: </label>
+          <select id="outlineColor" class="form-select" v-model="selectedOutlineColor">
+            <option :value="color" v-for="color in colors" :key="color">{{color}}</option>
+          </select>
+          <label for="fontWeight" class="form-label">字重: </label>
+          <select id="fontWeight" class="form-select" v-model="selectedFontWeight">
+            <option
+              :value="fontOption.weightNum"
+              v-for="fontOption in fontOptions"
+              :key="fontOption.weightName"
+            >
+              {{fontOption.weightName}}
+            </option>
+          </select>
         </div>
       </div>
 
