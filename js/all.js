@@ -27,21 +27,25 @@ const vm = Vue.createApp({
       const vm = this;
       vm.vueCanvas.strokeStyle = 'red';
       vm.vueCanvas.lineWidth = 3;
+
+      // 因 rotate 是以左上角為圓心旋轉，所以用 translate() 平移
+      vm.vueCanvas.translate(vm.toLeftPixel, vm.toTopPixel);
       vm.vueCanvas.rotate((vm.rotateDegree * Math.PI) / 180);
-      vm.vueCanvas.strokeRect(vm.toLeftPixel, vm.toTopPixel, vm.rectWidthPixel, vm.rectHeightPixel);
+      vm.vueCanvas.strokeRect(0, 0, vm.rectWidthPixel, vm.rectHeightPixel);
 
       // 畫完框，重設變形量，讓字體不旋轉
       vm.vueCanvas.resetTransform();
 
-      vm.vueCanvas.font = `${vm.selectedFontWeight} ${vm.fontSize + 1}px Arial`;
+      vm.vueCanvas.font = `${vm.selectedFontWeight} ${vm.fontSize}px Arial`;
       vm.vueCanvas.fillStyle = 'red';
 
-      // 白色光暈效果
+      // 白色光暈效果，棄用
       // vm.vueCanvas.shadowColor = 'white';
       // vm.vueCanvas.shadowBlur = vm.fontSize / 2;
 
-      const textInitY = vm.toTopPixel + vm.rectHeightPixel + vm.bottomShiftPixel + vm.fontSize * 1.2;
+      const textInitY = vm.toTopPixel + vm.rectHeightPixel + vm.bottomShiftPixel + 16;
       const textInitX = vm.toLeftPixel - vm.leftShiftPixel;
+      console.log('initX:', textInitX, 'initY:', textInitY);
 
       // 白色框線效果
       vm.vueCanvas.strokeStyle = vm.selectedOutlineColor;
