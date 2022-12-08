@@ -8,9 +8,11 @@ const vm = Vue.createApp({
       rectHeightPixel: 50,
       textContentVal: 'ROI',
       leftShiftPixel: 0,
+      bottomShiftPixel: 0,
       selectedOutlineColor: 'white',
       colors: ['white', 'black'],
       selectedFontWeight: 700,
+      rotateDegree: 0,
       fontOptions: [
         { weightName: 'Light', weightNum: 300 },
         { weightName: 'Regular', weightNum: 400 },
@@ -25,7 +27,11 @@ const vm = Vue.createApp({
       const vm = this;
       vm.vueCanvas.strokeStyle = 'red';
       vm.vueCanvas.lineWidth = 3;
+      vm.vueCanvas.rotate((vm.rotateDegree * Math.PI) / 180);
       vm.vueCanvas.strokeRect(vm.toLeftPixel, vm.toTopPixel, vm.rectWidthPixel, vm.rectHeightPixel);
+
+      // 畫完框，重設變形量，讓字體不旋轉
+      vm.vueCanvas.resetTransform();
 
       vm.vueCanvas.font = `${vm.selectedFontWeight} ${vm.fontSize + 1}px Arial`;
       vm.vueCanvas.fillStyle = 'red';
@@ -34,7 +40,7 @@ const vm = Vue.createApp({
       // vm.vueCanvas.shadowColor = 'white';
       // vm.vueCanvas.shadowBlur = vm.fontSize / 2;
 
-      const textInitY = vm.toTopPixel + vm.rectHeightPixel + vm.fontSize * 1.2;
+      const textInitY = vm.toTopPixel + vm.rectHeightPixel + vm.bottomShiftPixel + vm.fontSize * 1.2;
       const textInitX = vm.toLeftPixel - vm.leftShiftPixel;
 
       // 白色框線效果
