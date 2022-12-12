@@ -1,6 +1,8 @@
 const vm = Vue.createApp({
   data() {
     return {
+      XCoord: 0,
+      YCoord: 0,
       fontSize: 16,
       toTopPixel: 10,
       toLeftPixel: 10,
@@ -23,6 +25,34 @@ const vm = Vue.createApp({
     };
   },
   methods: {
+    getCoords(event) {
+      const canvas = this.$refs.canvas;
+
+      // console.log('moved!');
+
+      // canvas 元素到網頁頂端的距離, 56
+      // console.log('canvas.offsetTop', canvas.offsetTop);
+      // canvas 元素的 borderTopWidth, 1
+      // console.log('canvas.clientTop', canvas.clientTop);
+      // canvas 元素到網頁左邊的距離, 214
+      // console.log('canvas.offsetLeft', canvas.offsetLeft);
+      // canvas 元素的 borderLeftWidth, 1
+      // console.log('canvas.clientLeft', canvas.clientLeft);
+
+      // 取得滑鼠移動事件
+      // console.log('event', event);
+
+      // 到目前瀏覽器顯示區域的頂端
+      // console.log('event clientY: ', event.clientY);
+      // 到頁面頂端
+      // console.log('event pageY: ', event.pageY);
+      // 到目前螢幕頂端(超出瀏覽器)
+      // console.log('event screenY: ', event.screenY);
+
+      const vm = this;
+      vm.XCoord = event.pageX - canvas.offsetLeft;
+      vm.YCoord = event.pageY - canvas.offsetTop;
+    },
     showResult() {
       const vm = this;
       vm.vueCanvas.strokeStyle = 'red';

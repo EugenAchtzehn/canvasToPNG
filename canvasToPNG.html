@@ -32,7 +32,19 @@
     <canvas id="canvas"
             width="704"
             height="480"
-            ref="canvas"></canvas>
+            ref="canvas"
+            @mousemove="getCoords"></canvas>
+    <aside>
+      <h3>圖面座標：</h3>
+      <ul>
+        <li>
+          <span>X: {{ XCoord }}</span>
+        </li>
+        <li>
+          <span>Y: {{ YCoord }}</span>
+        </li>
+      </ul>
+    </aside>
     <div class="row mt-2">
       <div class="col-sm-3">
         <div class="relocateSec">
