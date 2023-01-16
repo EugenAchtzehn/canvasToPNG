@@ -3,6 +3,15 @@ const vm = Vue.createApp({
     return {
       XCoord: 0,
       YCoord: 0,
+      pathCoords: [],
+      recordMode: false,
+      // 先寫死，待研究怎麼取檔比較好
+      imageList: [
+        { imagePoint: '照片範例', imageFileName: '20221230_CamImg' },
+        { imagePoint: '黃範例', imageFileName: '20230116_YellowImg' },
+        { imagePoint: '藍範例', imageFileName: '20230116_BlueImg' },
+        { imagePoint: '綠範例', imageFileName: '20230116_GreenImg' },
+      ],
       fontSize: 16,
       toTopPixel: 10,
       toLeftPixel: 10,
@@ -21,6 +30,8 @@ const vm = Vue.createApp({
         { weightName: 'Bold', weightNum: 700 },
         { weightName: 'Black', weightNum: 900 },
       ],
+      // imageUrl: '../images/ExampleImage.png',
+      selectedPoint: 'default',
       vueCanvas: null,
     };
   },
@@ -52,6 +63,80 @@ const vm = Vue.createApp({
       const vm = this;
       vm.XCoord = event.pageX - canvas.offsetLeft;
       vm.YCoord = event.pageY - canvas.offsetTop;
+    },
+    recordCoords(event) {
+      const vm = this;
+      // When recordMode is true, starting record x, y
+      if (vm.recordMode) {
+        let x = vm.XCoord;
+        let y = vm.YCoord;
+        vm.pathCoords.push({ x, y });
+      }
+    },
+    changeSelect(e) {
+      // console.log('e.target.value: ', e.target.value);
+      const vm = this;
+      vm.selectedPoint = e.target.value;
+      // vm.selectedPoint = ;
+    },
+    importImage() {
+      // axios.get('https://randomuser.me/api/').then(function (response) {
+      //   console.log('response ', response);
+      //   console.log('response.data.results[0] ', response.data.results[0]);
+      // });
+
+      // axios.get('http://localhost:3000/GetTaipeiDistrict').then(function (response) {
+      //   console.log('localhost ', response);
+      // });
+
+      const vm = this;
+
+      if (vm.selectedPoint !== 'default') {
+        const image = new Image();
+        console.log(image);
+        image.onload = () => {
+          vm.vueCanvas.drawImage(image, 0, 0);
+        };
+        image.src = `../images/${vm.selectedPoint}.png`;
+      } else {
+        window.alert('請先選擇圖片才能載入！');
+      }
+    },
+    switchMode() {
+      const vm = this;
+      // console.log('switch');
+      vm.recordMode = !vm.recordMode;
+    },
+    drawPath() {
+      // console.log('init!');
+      const vm = this;
+      // 超過 3 組才能畫框
+      if (vm.pathCoords.length >= 3) {
+        vm.vueCanvas.beginPath();
+        vm.vueCanvas.moveTo(vm.pathCoords[0].x, vm.pathCoords[0].y);
+        for (let i = 1; i < vm.pathCoords.length; i++) {
+          vm.vueCanvas.lineTo(vm.pathCoords[i].x, vm.pathCoords[i].y);
+        }
+        vm.vueCanvas.closePath();
+        vm.vueCanvas.strokeStyle = 'red';
+        vm.vueCanvas.lineWidth = 3;
+        vm.vueCanvas.stroke();
+      } else {
+        window.alert('點位記錄不足 3 組，不能畫框！');
+      }
+    },
+    uploadImage(e) {
+      // console.log('e: ', e);
+      // console.log('e.target.files: ', e.target.files);
+      console.log('e.target.files[0]: ', e.target.files[0]);
+
+      const vm = this;
+      const image = new Image();
+
+      image.addEventListener('load', function () {
+        vm.vueCanvas.drawImage(image, 0, 0);
+      });
+      image.src = vm.imageUrl;
     },
     showResult() {
       const vm = this;
@@ -105,6 +190,11 @@ const vm = Vue.createApp({
       vm.vueCanvas.shadowColor = null;
       vm.vueCanvas.shadowBlur = null;
       vm.vueCanvas.clearRect(0, 0, canvas.width, canvas.height);
+    },
+    clearCanvasAndCoords() {
+      const vm = this;
+      vm.clearCanvas();
+      vm.pathCoords = [];
     },
   },
   mounted() {

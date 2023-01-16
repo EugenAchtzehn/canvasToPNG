@@ -21,6 +21,7 @@
         integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC"
         crossorigin="anonymous" />
   <!-- <script src="./js/xlsx.full.min.js"></script> -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/axios/1.2.2/axios.js"></script>
   <script src="https://unpkg.com/vue@3"></script>
   <title>ROI擷取</title>
 </head>
@@ -33,9 +34,61 @@
             width="704"
             height="480"
             ref="canvas"
-            @mousemove="getCoords"></canvas>
+            @mousemove="getCoords"
+            @click="recordCoords"></canvas>
+    <div class="my-3">
+      <select class="form-select mb-3"
+              style="width: 300px;"
+              @change="changeSelect">
+        <option value="default"
+                selected
+                disabled>--請選擇--</option>
+        <option :value="image.imageFileName"
+                v-for="(image, index ) in imageList"
+                :key="index">{{image.imagePoint}}</option>
+      </select>
+      <button type="button"
+              class="btn btn-success me-3"
+              @click="importImage">
+        載入圖片
+      </button>
+      <button type="button"
+              class="btn  me-3"
+              :class="{'btn-success': !recordMode, 'btn-danger': recordMode}"
+              @click="switchMode">
+        開始記錄點位
+      </button>
+      <button type="button"
+              class="btn btn-primary me-3"
+              @click="drawPath">
+        畫框
+      </button>
+      <button type="button"
+              class="btn btn-danger"
+              @click="clearCanvasAndCoords">清空點位和圖片</button>
+      <!-- 上傳檔案區 -->
+      <!-- <div class="mt-3">
+        <div class="input-group input-group-sm"
+             style="width: 300px;">
+          <input type="file"
+                 class="form-control"
+                 id="inputGroupFile"
+                 @change="uploadImage"
+                 accept="image/*">
+          <label class="input-group-text"
+                 for="inputGroupFile">上傳</label>
+        </div>
+      </div> -->
+      <div class="mt-3">
+        <h4>點位記錄：</h4>
+        <ul>
+          <li v-for="(coordset, index) in pathCoords"
+              :key="index">x: {{coordset.x }}, y: {{coordset.y}}</li>
+        </ul>
+      </div>
+    </div>
     <aside>
-      <h3>圖面座標：</h3>
+      <h4>圖面座標：</h4>
       <ul>
         <li>
           <span>X: {{ XCoord }}</span>
@@ -179,13 +232,15 @@
       font-family: Arial, Helvetica, sans-serif;
     } */
     canvas {
-      border: 1px solid #003300;
+      border: 2px solid #003300;
     }
   </style>
   <script src="./js/all.js"></script>
 </body>
 
 <script>
+  // console.log('axios: ', axios);
+
   const canvas = document.querySelector('#canvas');
   const getContext = canvas.getContext('2d');
 
