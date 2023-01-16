@@ -97,7 +97,9 @@ const vm = Vue.createApp({
         image.onload = () => {
           vm.vueCanvas.drawImage(image, 0, 0);
         };
-        image.src = `../images/${vm.selectedPoint}.png`;
+        // online: https://eugenachtzehn.github.io/canvasToPNG/images/20221230_CamImg.png
+        // local: ../images/${vm.selectedPoint}.png
+        image.src = `https://eugenachtzehn.github.io/canvasToPNG/images/${vm.selectedPoint}.png`;
       } else {
         window.alert('請先選擇圖片才能載入！');
       }
