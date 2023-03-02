@@ -7,10 +7,10 @@ const vm = Vue.createApp({
       recordMode: false,
       // 先寫死，待研究怎麼取檔比較好
       imageList: [
-        { imagePoint: '照片範例', imageFileName: '20221230_CamImg' },
-        { imagePoint: '黃範例', imageFileName: '20230116_YellowImg' },
-        { imagePoint: '藍範例', imageFileName: '20230116_BlueImg' },
-        { imagePoint: '綠範例', imageFileName: '20230116_GreenImg' },
+        { imagePoint: '照片範例1', imageFileName: 'SamplePicture1' },
+        { imagePoint: '照片範例2', imageFileName: 'SamplePicture2' },
+        { imagePoint: '照片範例3', imageFileName: 'SamplePicture3' },
+        { imagePoint: '照片範例4_夜間', imageFileName: 'SamplePicture4_Night' },
       ],
       fontSize: 16,
       toTopPixel: 10,
@@ -104,7 +104,7 @@ const vm = Vue.createApp({
         };
         // online: https://eugenachtzehn.github.io/canvasToPNG/images/20221230_CamImg.png
         // local: ../images/${vm.selectedPoint}.png
-        image.src = `https://eugenachtzehn.github.io/canvasToPNG/images/${vm.selectedPoint}.png`;
+        image.src = `https://eugenachtzehn.github.io/canvasToPNG/images/${vm.selectedPoint}.jpg`;
       } else {
         window.alert('請先選擇圖片才能載入！');
       }
@@ -122,7 +122,7 @@ const vm = Vue.createApp({
       vm.vueCanvas.moveTo(vm.pathCoords[arrayLength - 1]?.x, vm.pathCoords[arrayLength - 1]?.y);
       vm.vueCanvas.lineTo(vm.pathCoords[arrayLength - 2]?.x, vm.pathCoords[arrayLength - 2]?.y);
       vm.vueCanvas.closePath();
-      vm.vueCanvas.strokeStyle = 'red';
+      vm.vueCanvas.strokeStyle = 'blue';
       vm.vueCanvas.lineWidth = 1;
       vm.vueCanvas.stroke();
     },
