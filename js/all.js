@@ -72,6 +72,7 @@ const vm = Vue.createApp({
         let y = vm.YCoord;
         vm.pathCoords.push({ x, y });
       }
+      vm.drawConnection();
     },
     changeSelect(e) {
       // console.log('e.target.value: ', e.target.value);
@@ -108,6 +109,18 @@ const vm = Vue.createApp({
       const vm = this;
       // console.log('switch');
       vm.recordMode = !vm.recordMode;
+    },
+    // 僅畫出兩次點擊間的連線
+    drawConnection() {
+      const vm = this;
+      vm.vueCanvas.beginPath();
+      let arrayLength = vm.pathCoords.length;
+      vm.vueCanvas.moveTo(vm.pathCoords[arrayLength - 1]?.x, vm.pathCoords[arrayLength - 1]?.y);
+      vm.vueCanvas.lineTo(vm.pathCoords[arrayLength - 2]?.x, vm.pathCoords[arrayLength - 2]?.y);
+      vm.vueCanvas.closePath();
+      vm.vueCanvas.strokeStyle = 'red';
+      vm.vueCanvas.lineWidth = 1;
+      vm.vueCanvas.stroke();
     },
     drawPath() {
       // console.log('init!');
@@ -205,6 +218,7 @@ const vm = Vue.createApp({
     const canvas = this.$refs.canvas.getContext('2d');
     this.vueCanvas = canvas;
   },
+  created() {},
 });
 
 // mount
