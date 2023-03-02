@@ -93,8 +93,12 @@ const vm = Vue.createApp({
       const vm = this;
 
       if (vm.selectedPoint !== 'default') {
-        const image = new Image();
+        let image = new Image();
+        // fix the issue of tainted canvases may not be exported.
+        image.crossOrigin = 'Anonymous';
+        // an object
         console.log(image);
+        // console.dir(image);
         image.onload = () => {
           vm.vueCanvas.drawImage(image, 0, 0);
         };
