@@ -1,46 +1,58 @@
 <!DOCTYPE html>
 <html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <!-- Begin of importing google fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700;900&display=swap"
+      rel="stylesheet"
+    />
+    <!-- End of importing google fonts -->
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+      integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC"
+      crossorigin="anonymous"
+    />
+    <!-- <script src="./js/xlsx.full.min.js"></script> -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/axios/1.2.2/axios.js"></script>
+    <script src="https://unpkg.com/vue@3.2.45"></script>
+    <title>ROI擷取</title>
+  </head>
 
-<head>
-  <meta charset="UTF-8" />
-  <meta http-equiv="X-UA-Compatible"
-        content="IE=edge" />
-  <meta name="viewport"
-        content="width=device-width, initial-scale=1.0" />
-  <!-- Begin of importing google fonts -->
-  <link rel="preconnect"
-        href="https://fonts.googleapis.com" />
-  <link rel="preconnect"
-        href="https://fonts.gstatic.com"
-        crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700;900&display=swap"
-        rel="stylesheet" />
-  <!-- End of importing google fonts -->
-  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css"
-        rel="stylesheet"
-        integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC"
-        crossorigin="anonymous" />
-  <!-- <script src="./js/xlsx.full.min.js"></script> -->
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/axios/1.2.2/axios.js"></script>
-  <script src="https://unpkg.com/vue@3.2.45"></script>
-  <title>ROI擷取</title>
-</head>
-
-<body>
-  <div id="app"
-       class="container">
-    <div class="">
-      <h1>ROI產框</h1>
-      <h4 class="mouseCoords">圖面座標 x: {{ XCoord }}, y: {{ YCoord }}</h4>
-    </div>
-    <canvas id="canvas"
-            width="704"
-            height="480"
-            ref="canvas"
-            @mousemove="getCoords"
-            @click="recordCoords"></canvas>
-    <div class="my-3">
-      <select class="form-select mb-3"
+  <body>
+    <div id="app" class="container">
+      <div class="">
+        <h1>ROI產框</h1>
+        <h4 class="mouseCoords">圖面座標 x: {{ XCoord }}, y: {{ YCoord }}</h4>
+      </div>
+      <canvas
+        id="canvas"
+        width="704"
+        height="480"
+        ref="canvas"
+        @mousemove="getCoords"
+        @click="recordCoords"
+      ></canvas>
+      <!-- 上傳檔案區 -->
+      <div class="mt-3">
+        <div class="input-group input-group-sm" style="width: 300px">
+          <input
+            type="file"
+            class="form-control"
+            id="inputGroupFile"
+            @change="uploadImage"
+            accept="image/*"
+          />
+          <label class="input-group-text" for="inputGroupFile">上傳</label>
+        </div>
+      </div>
+      <div class="my-3">
+        <!-- <select class="form-select mb-3"
               style="width: 300px;"
               @change="changeSelect">
         <option value="default"
@@ -49,306 +61,250 @@
         <option :value="image.imageFileName"
                 v-for="(image, index ) in imageList"
                 :key="index">{{image.imagePoint}}</option>
-      </select>
-      <button type="button"
+      </select> -->
+        <!-- <button type="button"
               class="btn btn-success me-3"
               @click="importImage">
         載入圖片
-      </button>
-      <button type="button"
-              class="btn  me-3"
-              :class="{'btn-success': !recordMode, 'btn-danger': recordMode}"
-              @click="switchMode">
-        開始記錄點位
-      </button>
-      <button type="button"
-              class="btn btn-primary me-3"
-              @click="drawPath">
-        畫框
-      </button>
-      <button type="button"
-              class="btn btn-danger"
-              @click="clearCanvasAndCoords">清空點位和圖片</button>
-      <!-- 上傳檔案區 -->
-      <!-- <div class="mt-3">
-        <div class="input-group input-group-sm"
-             style="width: 300px;">
-          <input type="file"
-                 class="form-control"
-                 id="inputGroupFile"
-                 @change="uploadImage"
-                 accept="image/*">
-          <label class="input-group-text"
-                 for="inputGroupFile">上傳</label>
-        </div>
-      </div> -->
-      <div class="mt-3">
-        <h4>點位記錄：</h4>
-        <section class="pointRecordsSection">
-          <span v-for="(coordset, index) in pathCoords"
-                :key="index">Pt{{index + 1}} [x: {{coordset.x }}, y: {{coordset.y}}], </span>
-        </section>
-      </div>
-    </div>
-    <div class="row mt-2">
-      <div class="col-sm-3">
-        <div class="relocateSec">
-          <label for="toTop"
-                 class="form-label">Top (px) </label>
-          <input type="number"
-                 id="toTop"
-                 class="form-control"
-                 v-model="toTopPixel" />
-          <label for="toLeft"
-                 class="form-label">Left (px) </label>
-          <input type="number"
-                 id="toLeft"
-                 class="form-control"
-                 v-model="toLeftPixel" />
+      </button> -->
+        <button
+          type="button"
+          class="btn me-3"
+          :class="{'btn-success': !recordMode, 'btn-danger': recordMode}"
+          @click="switchMode"
+        >
+          開始記錄點位
+        </button>
+        <button type="button" class="btn btn-primary me-3" @click="drawPath">畫框</button>
+        <button type="button" class="btn btn-danger" @click="clearCanvasAndCoords">
+          清空點位和圖片
+        </button>
+        <div class="mt-3">
+          <h4>點位記錄：</h4>
+          <section class="pointRecordsSection">
+            <span v-for="(coordset, index) in pathCoords" :key="index"
+              >Pt{{index + 1}} [x: {{coordset.x }}, y: {{coordset.y}}],
+            </span>
+          </section>
         </div>
       </div>
-      <div class="col-sm-3">
-        <div class="resizeSec">
-          <label for="rectWidth"
-                 class="form-label">寬度 (px) </label>
-          <input type="number"
-                 id="rectWidth"
-                 class="form-control"
-                 v-model="rectWidthPixel" />
-          <label for="rectHeight"
-                 class="form-label">高度 (px) </label>
-          <input type="number"
-                 id="rectHeight"
-                 class="form-control"
-                 v-model="rectHeightPixel" />
+      <div class="row mt-2">
+        <div class="col-sm-3">
+          <div class="relocateSec">
+            <label for="toTop" class="form-label">Top (px) </label>
+            <input type="number" id="toTop" class="form-control" v-model="toTopPixel" />
+            <label for="toLeft" class="form-label">Left (px) </label>
+            <input type="number" id="toLeft" class="form-control" v-model="toLeftPixel" />
+          </div>
+        </div>
+        <div class="col-sm-3">
+          <div class="resizeSec">
+            <label for="rectWidth" class="form-label">寬度 (px) </label>
+            <input type="number" id="rectWidth" class="form-control" v-model="rectWidthPixel" />
+            <label for="rectHeight" class="form-label">高度 (px) </label>
+            <input type="number" id="rectHeight" class="form-control" v-model="rectHeightPixel" />
+          </div>
+        </div>
+        <div class="col-sm-3">
+          <div class="textSec">
+            <label for="textContent" class="form-label outline-danger">Text: </label>
+            <input
+              id="textContent"
+              type="text"
+              class="form-control border border-warning"
+              v-model="textContentVal"
+            />
+            <label for="leftShift" class="form-label">字往左移 (px)</label>
+            <input type="number" id="leftShift" class="form-control" v-model="leftShiftPixel" />
+            <label for="bottomShift" class="form-label">字往下移 (px)</label>
+            <input type="number" id="bottomShift" class="form-control" v-model="bottomShiftPixel" />
+          </div>
+        </div>
+        <div class="col-sm-3">
+          <label for="outlineColor" class="form-label">文字框線顏色: </label>
+          <select id="outlineColor" class="form-select" v-model="selectedOutlineColor">
+            <option :value="color" v-for="color in colors" :key="color">{{color}}</option>
+          </select>
+          <label for="fontWeight" class="form-label">字重: </label>
+          <select id="fontWeight" class="form-select" v-model="selectedFontWeight">
+            <option
+              :value="fontOption.weightNum"
+              v-for="fontOption in fontOptions"
+              :key="fontOption.weightName"
+            >
+              {{fontOption.weightName}}
+            </option>
+          </select>
         </div>
       </div>
-      <div class="col-sm-3">
-        <div class="textSec">
-          <label for="textContent"
-                 class="form-label outline-danger">Text: </label>
-          <input id="textContent"
-                 type="text"
-                 class="form-control border border-warning"
-                 v-model="textContentVal" />
-          <label for="leftShift"
-                 class="form-label">字往左移 (px)</label>
-          <input type="number"
-                 id="leftShift"
-                 class="form-control"
-                 v-model="leftShiftPixel" />
-          <label for="bottomShift"
-                 class="form-label">字往下移 (px)</label>
-          <input type="number"
-                 id="bottomShift"
-                 class="form-control"
-                 v-model="bottomShiftPixel" />
+      <div class="row mt-2">
+        <div class="col-sm-3">
+          <div class="rotateSec">
+            <label for="rotateDeg" class="form-label">rotate (deg) </label>
+            <input type="number" id="rotateDeg" class="form-control" v-model="rotateDegree" />
+          </div>
         </div>
       </div>
-      <div class="col-sm-3">
-        <label for="outlineColor"
-               class="form-label">文字框線顏色: </label>
-        <select id="outlineColor"
-                class="form-select"
-                v-model="selectedOutlineColor">
-          <option :value="color"
-                  v-for="color in colors"
-                  :key="color">{{color}}</option>
-        </select>
-        <label for="fontWeight"
-               class="form-label">字重: </label>
-        <select id="fontWeight"
-                class="form-select"
-                v-model="selectedFontWeight">
-          <option :value="fontOption.weightNum"
-                  v-for="fontOption in fontOptions"
-                  :key="fontOption.weightName">
-            {{fontOption.weightName}}
-          </option>
-        </select>
-      </div>
-    </div>
-    <div class="row mt-2">
-      <div class="col-sm-3">
-        <div class="rotateSec">
-          <label for="rotateDeg"
-                 class="form-label">rotate (deg) </label>
-          <input type="number"
-                 id="rotateDeg"
-                 class="form-control"
-                 v-model="rotateDegree" />
-        </div>
-      </div>
-    </div>
 
-    <div class="controlSec mt-3 row">
-      <!-- <div class="col-sm-1">
+      <div class="controlSec mt-3 row">
+        <!-- <div class="col-sm-1">
           <button type="button" id="generate" class="btn btn-outline-success">產圖</button>
         </div>
         <div class="col-sm-1">
           <button type="button" id="save" class="btn btn-outline-primary">存檔</button>
         </div> -->
-      <div class="col-sm-1">
-        <button type="button"
-                class="btn btn-outline-success"
-                @click="showResult">產圖</button>
+        <div class="col-sm-1">
+          <button type="button" class="btn btn-outline-success" @click="showResult">產圖</button>
+        </div>
+        <div class="col-sm-1">
+          <button type="button" class="btn btn-outline-primary" @click="saveResult">存檔</button>
+        </div>
+        <div class="col-sm-1">
+          <button type="button" class="btn btn-outline-danger" @click="clearCanvas">清空</button>
+        </div>
       </div>
-      <div class="col-sm-1">
-        <button type="button"
-                class="btn btn-outline-primary"
-                @click="saveResult">存檔</button>
-      </div>
-      <div class="col-sm-1">
-        <button type="button"
-                class="btn btn-outline-danger"
-                @click="clearCanvas">清空</button>
-      </div>
+      <ul class="mt-4">
+        <li>
+          <a target="_blank" href="https://codepen.io/fdb/pen/ExVbONw">
+            Thanks to Frederik De Bleser's Ref.
+          </a>
+        </li>
+        <li>
+          <a target="_blank" href="https://tools.wingzero.tw/article/sn/560">
+            For using Vue to manipulate canvas
+          </a>
+        </li>
+      </ul>
     </div>
-    <ul class="mt-4">
-      <li>
-        <a target="_blank"
-           href="https://codepen.io/fdb/pen/ExVbONw">
-          Thanks to Frederik De Bleser's Ref.
-        </a>
-      </li>
-      <li>
-        <a target="_blank"
-           href="https://tools.wingzero.tw/article/sn/560">
-          For using Vue to manipulate canvas
-        </a>
-      </li>
-    </ul>
-  </div>
-  <style>
-    /* body {
+    <style>
+      /* body {
       font-family: Arial, Helvetica, sans-serif;
     } */
-    canvas {
-      border: 2px solid #003300;
+      canvas {
+        border: 2px solid #003300;
+      }
+
+      .pointRecordsSection {
+        background-color: #e6e6e6;
+        height: 80px;
+        padding: 0.5rem;
+        font-size: 0.8rem;
+      }
+
+      h1 {
+        font-family: Noto Sans TC;
+        font-weight: 700;
+        display: inline-block;
+      }
+
+      .mouseCoords {
+        /* display: inline-block; */
+        font-size: 1.2rem;
+      }
+    </style>
+    <script src="./js/all.js"></script>
+  </body>
+
+  <script>
+    // console.log('axios: ', axios);
+
+    const canvas = document.querySelector('#canvas');
+    const getContext = canvas.getContext('2d');
+
+    const toTop = document.querySelector('#toTop');
+    const toLeft = document.querySelector('#toLeft');
+
+    const rectWidth = document.querySelector('#rectWidth');
+    const rectHeight = document.querySelector('#rectHeight');
+
+    const textContent = document.querySelector('#textContent');
+    const leftShift = document.querySelector('#leftShift');
+
+    // const generate = document.querySelector('#generate');
+    // const save = document.querySelector('#save');
+
+    const fontSize = 16;
+
+    // generate.addEventListener('click', onGenerateHandler);
+    // save.addEventListener('click', onSaveHandler);
+
+    function onSaveHandler() {
+      // console.log('saved!');
+      const canvas = document.getElementById('canvas');
+      const gtContext = canvas.getContext('2d');
+      canvas.toBlob((blob) => {
+        // 產生時間戳記
+        const timestamp = Date.now().toString();
+        // 建立一個 <a></a>
+        const a = document.createElement('a');
+        document.body.append(a);
+        a.download = `export-${timestamp}.png`;
+        a.href = URL.createObjectURL(blob);
+        a.click();
+        a.remove();
+        // console.log(URL.createObjectURL(blob));
+      });
     }
 
-    .pointRecordsSection {
-      background-color: #e6e6e6;
-      height: 80px;
-      padding: 0.5rem;
-      font-size: 0.8rem;
+    function onGenerateHandler() {
+      // console.log('generate button triggered!');
+      let leftOffset = Number(toLeft.value) || 670;
+      let topOffset = Number(toTop.value) || 278;
+      let xPixel = Number(rectWidth.value) || 21;
+      let yPixel = Number(rectHeight.value) || 14;
+      let leftShiftVal = Number(leftShift.value) || 0;
+      let textVal = textContent.value || '012345678901234';
+
+      getContext.strokeStyle = 'red';
+      getContext.lineWidth = 3;
+      getContext.strokeRect(leftOffset, topOffset, xPixel, yPixel);
+
+      getContext.font = `900 ${fontSize}px Arial`;
+      getContext.fillStyle = 'red';
+      getContext.shadowColor = 'white';
+      getContext.shadowBlur = fontSize / 2;
+
+      console.log('getContext', getContext);
+
+      let initHeight = topOffset + yPixel + fontSize * 1.2;
+
+      let txtTotalCanvasWidth = getContext.measureText(textVal).width;
+
+      if (txtTotalCanvasWidth + leftOffset > 704) {
+        let txtCanvasWidth = 0;
+        let breakPointIndex = 0; // 記錄斷點的索引值
+
+        // for Dabby on 2022/10/26
+        getContext.fillText(textVal, leftOffset - fontSize * leftShiftVal, initHeight);
+
+        // for (let i = 0; i < textVal.length; i++) {
+        //   // 到邊界不足一個字寬時換行
+        //   if (txtCanvasWidth + leftOffset > 704) {
+        //     // 形成一行
+        //     const insertTxt = textVal.substring(breakPointIndex, i);
+        //     // 往左調兩格
+        //     getContext.fillText(insertTxt, leftOffset - fontSize * 2, initHeight);
+        //     // 記錄切到哪的索引
+        //     breakPointIndex = i;
+        //     // 換行
+        //     initHeight += fontSize;
+        //     // 清空字串長度計算器
+        //     txtCanvasWidth = 0;
+        //   }
+        //   txtCanvasWidth += getContext.measureText(textVal[i]).width;
+        //   console.log('累加字串寬度', txtCanvasWidth);
+        // }
+        // // 不滿足條件的字串寫入
+        // getContext.fillText(
+        //   textVal.substring(breakPointIndex, textVal.length),
+        //   leftOffset - fontSize * 2,
+        //   initHeight
+        // );
+      }
+      // 一般狀況走下面
+      else {
+        getContext.fillText(textVal, leftOffset, initHeight);
+      }
     }
-
-    h1 {
-      font-family: Noto Sans TC;
-      font-weight: 700;
-      display: inline-block;
-    }
-
-    .mouseCoords {
-      /* display: inline-block; */
-      font-size: 1.2rem;
-    }
-  </style>
-  <script src="./js/all.js"></script>
-</body>
-
-<script>
-  // console.log('axios: ', axios);
-
-  const canvas = document.querySelector('#canvas');
-  const getContext = canvas.getContext('2d');
-
-  const toTop = document.querySelector('#toTop');
-  const toLeft = document.querySelector('#toLeft');
-
-  const rectWidth = document.querySelector('#rectWidth');
-  const rectHeight = document.querySelector('#rectHeight');
-
-  const textContent = document.querySelector('#textContent');
-  const leftShift = document.querySelector('#leftShift');
-
-  // const generate = document.querySelector('#generate');
-  // const save = document.querySelector('#save');
-
-  const fontSize = 16;
-
-  // generate.addEventListener('click', onGenerateHandler);
-  // save.addEventListener('click', onSaveHandler);
-
-  function onSaveHandler() {
-    // console.log('saved!');
-    const canvas = document.getElementById('canvas');
-    const gtContext = canvas.getContext('2d');
-    canvas.toBlob((blob) => {
-      // 產生時間戳記
-      const timestamp = Date.now().toString();
-      // 建立一個 <a></a>
-      const a = document.createElement('a');
-      document.body.append(a);
-      a.download = `export-${timestamp}.png`;
-      a.href = URL.createObjectURL(blob);
-      a.click();
-      a.remove();
-      // console.log(URL.createObjectURL(blob));
-    });
-  }
-
-  function onGenerateHandler() {
-    // console.log('generate button triggered!');
-    let leftOffset = Number(toLeft.value) || 670;
-    let topOffset = Number(toTop.value) || 278;
-    let xPixel = Number(rectWidth.value) || 21;
-    let yPixel = Number(rectHeight.value) || 14;
-    let leftShiftVal = Number(leftShift.value) || 0;
-    let textVal = textContent.value || '012345678901234';
-
-    getContext.strokeStyle = 'red';
-    getContext.lineWidth = 3;
-    getContext.strokeRect(leftOffset, topOffset, xPixel, yPixel);
-
-    getContext.font = `900 ${fontSize}px Arial`;
-    getContext.fillStyle = 'red';
-    getContext.shadowColor = 'white';
-    getContext.shadowBlur = fontSize / 2;
-
-    console.log('getContext', getContext);
-
-    let initHeight = topOffset + yPixel + fontSize * 1.2;
-
-    let txtTotalCanvasWidth = getContext.measureText(textVal).width;
-
-    if (txtTotalCanvasWidth + leftOffset > 704) {
-      let txtCanvasWidth = 0;
-      let breakPointIndex = 0; // 記錄斷點的索引值
-
-      // for Dabby on 2022/10/26
-      getContext.fillText(textVal, leftOffset - fontSize * leftShiftVal, initHeight);
-
-      // for (let i = 0; i < textVal.length; i++) {
-      //   // 到邊界不足一個字寬時換行
-      //   if (txtCanvasWidth + leftOffset > 704) {
-      //     // 形成一行
-      //     const insertTxt = textVal.substring(breakPointIndex, i);
-      //     // 往左調兩格
-      //     getContext.fillText(insertTxt, leftOffset - fontSize * 2, initHeight);
-      //     // 記錄切到哪的索引
-      //     breakPointIndex = i;
-      //     // 換行
-      //     initHeight += fontSize;
-      //     // 清空字串長度計算器
-      //     txtCanvasWidth = 0;
-      //   }
-      //   txtCanvasWidth += getContext.measureText(textVal[i]).width;
-      //   console.log('累加字串寬度', txtCanvasWidth);
-      // }
-      // // 不滿足條件的字串寫入
-      // getContext.fillText(
-      //   textVal.substring(breakPointIndex, textVal.length),
-      //   leftOffset - fontSize * 2,
-      //   initHeight
-      // );
-    }
-    // 一般狀況走下面
-    else {
-      getContext.fillText(textVal, leftOffset, initHeight);
-    }
-  }
-</script>
-
+  </script>
 </html>

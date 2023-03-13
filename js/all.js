@@ -145,17 +145,32 @@ const vm = Vue.createApp({
       }
     },
     uploadImage(e) {
+      const vm = this;
+      const canvas = this.$refs.canvas;
       // console.log('e: ', e);
       // console.log('e.target.files: ', e.target.files);
       console.log('e.target.files[0]: ', e.target.files[0]);
+      const imageFile = e.target.files[0];
 
-      const vm = this;
-      const image = new Image();
+      let reader = new FileReader();
+      reader.readAsDataURL(imageFile);
+      reader.onloadend = (readerEvent) => {
+        const image = new Image(); // create image object
+        image.src = readerEvent.target.result; // assign converted image to image object
+        image.onload = (imageEvent) => {
+          console.log('imageEvent', imageEvent);
+          console.dir('image', image);
+          canvas.width = image.width;
+          canvas.height = image.height;
+          vm.vueCanvas.drawImage(image, 0, 0);
+          let imageData = canvas.toDataURL('image/jpeg', 0.8);
+        };
+      };
 
-      image.addEventListener('load', function () {
-        vm.vueCanvas.drawImage(image, 0, 0);
-      });
-      image.src = vm.imageUrl;
+      // image.addEventListener('load', function () {
+      //   vm.vueCanvas.drawImage(image, 0, 0);
+      // });
+      // image.src = vm.imageUrl;
     },
     showResult() {
       const vm = this;
