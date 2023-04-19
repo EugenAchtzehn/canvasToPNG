@@ -66,13 +66,20 @@ const vm = Vue.createApp({
     },
     recordCoords(event) {
       const vm = this;
-      // When recordMode is true, starting record x, y
+
+      // 限制點位記錄數
+      if (vm.pathCoords.length >= 4) {
+        window.alert('繪製點位不可超出 4 組！');
+        return;
+      }
+
+      // When recordMode is true, start to record x, y
       if (vm.recordMode) {
         let x = vm.XCoord;
         let y = vm.YCoord;
         vm.pathCoords.push({ x, y });
+        vm.drawConnection();
       }
-      vm.drawConnection();
     },
     changeSelect(e) {
       // console.log('e.target.value: ', e.target.value);
@@ -143,6 +150,97 @@ const vm = Vue.createApp({
       } else {
         window.alert('點位記錄不足 3 組，不能畫框！');
       }
+    },
+    postToDatabase() {
+      const vm = this;
+      if (vm.checkIsFourPoints()) {
+        // 排好四點在 pathCoords 中的順序，TL > TR > LR > LL
+        const orderedPathCoords = vm.reorderPathCoords(vm.pathCoords);
+        const postJson = {
+          Smoke: {
+            // x, y
+            TL: [orderedPathCoords[0].x, orderedPathCoords[0].y],
+            TR: [orderedPathCoords[1].x, orderedPathCoords[1].y],
+            LL: [orderedPathCoords[2].x, orderedPathCoords[2].y],
+            LR: [orderedPathCoords[3].x, orderedPathCoords[3].y],
+          },
+          // Stable: {
+          //   TL: [100, 100],
+          //   TR: [200, 100],
+          //   LL: [200, 200],
+          //   LR: [100, 200],
+          // },
+        };
+        axios
+          .post('http://localhost:5050/data.ashx', postJson)
+          .then((response) => {
+            console.log(response);
+          })
+          .catch((error) => {
+            console.log(error);
+          });
+      } else {
+        window.alert('不足 4 點，新增失敗');
+        return;
+      }
+    },
+    checkIsFourPoints() {
+      const vm = this;
+      if (vm.pathCoords.length === 4) {
+        return true;
+      } else {
+        return false;
+      }
+    },
+    reorderPathCoords(coordsArray) {
+      let testArray1 = [
+        { x: 0, y: 2 },
+        { x: 2, y: 1 },
+        { x: 3, y: 3 },
+        { x: 2, y: 6 },
+      ];
+      // reversed testArray1
+      let testArray2 = [
+        { x: 2, y: 6 },
+        { x: 3, y: 3 },
+        { x: 2, y: 1 },
+        { x: 0, y: 2 },
+      ];
+      let testArray3 = [
+        { x: 2, y: 1 },
+        { x: 5, y: 1 },
+        { x: 3, y: 2 },
+        { x: 0, y: 2 },
+      ];
+      let testArray4 = [
+        { x: 2, y: 1 },
+        { x: 0, y: 4 },
+        { x: 5, y: 4 },
+        { x: 1, y: 3 },
+      ];
+      // exclude invalid array
+      if (coordsArray.length < 4) {
+        window.alert('array invalid!');
+        return;
+      }
+      let xTotal = 0;
+      let yTotal = 0;
+      coordsArray.forEach((item) => {
+        xTotal += item.x;
+        yTotal += item.y;
+      });
+      let xCenter = xTotal / 4;
+      let yCenter = yTotal / 4;
+      // console.log('x center: ', xCenter);
+      // console.log('y center: ', yCenter);
+      // coordsArray.forEach((item, index) => {
+      //   console.log(Math.atan2(item.y - yCenter, item.x - xCenter), index);
+      // });
+      // 左上和左下
+      coordsArray.sort((a, b) => {
+        return Math.atan2(a.y - yCenter, a.x - xCenter) - Math.atan2(b.y - yCenter, b.x - xCenter);
+      });
+      return coordsArray;
     },
     uploadImage(e) {
       const vm = this;
