@@ -34,8 +34,8 @@
       <h4 class="mouseCoords">圖面座標 x: {{ XCoord }}, y: {{ YCoord }}</h4>
     </div>
     <canvas id="canvas"
-            width="1920"
-            height="1080"
+            :width="canvasWidth"
+            :height="canvasHeight"
             ref="canvas"
             @mousemove="getCoords"
             @click="recordCoords"></canvas>
@@ -186,6 +186,22 @@
                  id="rotateDeg"
                  class="form-control"
                  v-model="rotateDegree" />
+        </div>
+      </div>
+      <div class="col-sm-3">
+        <div class="">
+          <label for="adjustWidth"
+                 class="form-label">畫布寬度</label>
+          <input type="number"
+                 id="adjustWidth"
+                 class="form-control"
+                 v-model="canvasWidth" />
+          <label for="adjustHeight"
+                 class="form-label">畫布高度</label>
+          <input type="number"
+                 id="adjustHeight"
+                 class="form-control"
+                 v-model="canvasHeight" />
         </div>
       </div>
     </div>

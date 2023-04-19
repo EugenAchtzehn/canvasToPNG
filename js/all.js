@@ -12,6 +12,8 @@ const vm = Vue.createApp({
         { imagePoint: '照片範例3', imageFileName: 'SamplePicture3' },
         { imagePoint: '照片範例4_夜間', imageFileName: 'SamplePicture4_Night' },
       ],
+      canvasWidth: 704,
+      canvasHeight: 480,
       fontSize: 16,
       toTopPixel: 10,
       toLeftPixel: 10,
@@ -33,6 +35,7 @@ const vm = Vue.createApp({
       // imageUrl: '../images/ExampleImage.png',
       selectedPoint: 'default',
       vueCanvas: null,
+      canvasEntity: null,
     };
   },
   methods: {
@@ -328,14 +331,29 @@ const vm = Vue.createApp({
       vm.clearCanvas();
       vm.pathCoords = [];
     },
+    resizeCanvas() {
+      const canvas = this.$refs.canvas;
+      canvas.width = this.canvasWidth;
+      canvas.height = this.canvasHeight;
+    },
   },
   mounted() {
     // vueCanvas 是存入 2D 畫布的 context 資訊
     // this.$refs.canvas 才是 canvas 的 dom 本體
-    const canvas = this.$refs.canvas.getContext('2d');
-    this.vueCanvas = canvas;
+    const canvas = this.$refs.canvas;
+    this.canvasEntity = canvas;
+    const canvasContext = canvas.getContext('2d');
+    this.vueCanvas = canvasContext;
   },
   created() {},
+  watch: {
+    canvasWidth(newWidth, oldWidth) {
+      this.resizeCanvas();
+    },
+    canvasHeight(newHeight, oldHeight) {
+      this.resizeCanvas();
+    },
+  },
 });
 
 // mount
