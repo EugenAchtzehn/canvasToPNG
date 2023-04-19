@@ -40,7 +40,7 @@
             @mousemove="getCoords"
             @click="recordCoords"></canvas>
     <!-- 上傳檔案區 -->
-    <div class="mt-3">
+    <!-- <div class="mt-3">
       <div class="input-group input-group-sm"
            style="width: 300px">
         <input type="file"
@@ -51,9 +51,9 @@
         <label class="input-group-text"
                for="inputGroupFile">上傳</label>
       </div>
-    </div>
-    <div class="my-3">
-      <!-- <select class="form-select mb-3"
+    </div> -->
+    <!-- <div class="my-3">
+      <select class="form-select mb-3"
               style="width: 300px;"
               @change="changeSelect">
         <option value="default"
@@ -62,12 +62,12 @@
         <option :value="image.imageFileName"
                 v-for="(image, index ) in imageList"
                 :key="index">{{image.imagePoint}}</option>
-      </select> -->
-      <!-- <button type="button"
+      </select>
+      <button type="button"
               class="btn btn-success me-3"
               @click="importImage">
         載入圖片
-      </button> -->
+      </button>
       <button type="button"
               class="btn me-3"
               :class="{'btn-success': !recordMode, 'btn-danger': recordMode}"
@@ -88,7 +88,6 @@
                 @click="postToDatabase">
           傳到資料庫
         </button>
-        <!-- <button type="button" class="btn btn-success me-3" @click=""></button> -->
       </div>
       <div class="mt-3">
         <h4>點位記錄：</h4>
@@ -97,6 +96,24 @@
                 :key="index">Pt{{index + 1}} [x: {{coordset.x }}, y: {{coordset.y}}],
           </span>
         </section>
+      </div>
+    </div> -->
+    <div class="row mt-2">
+      <div class="col-sm-3">
+        <div class="adjustCanvasSec">
+          <label for="adjustWidth"
+                 class="form-label">畫布寬度</label>
+          <input type="number"
+                 id="adjustWidth"
+                 class="form-control"
+                 v-model="canvasWidth" />
+          <label for="adjustHeight"
+                 class="form-label">畫布高度</label>
+          <input type="number"
+                 id="adjustHeight"
+                 class="form-control"
+                 v-model="canvasHeight" />
+        </div>
       </div>
     </div>
     <div class="row mt-2">
@@ -188,22 +205,6 @@
                  v-model="rotateDegree" />
         </div>
       </div>
-      <div class="col-sm-3">
-        <div class="">
-          <label for="adjustWidth"
-                 class="form-label">畫布寬度</label>
-          <input type="number"
-                 id="adjustWidth"
-                 class="form-control"
-                 v-model="canvasWidth" />
-          <label for="adjustHeight"
-                 class="form-label">畫布高度</label>
-          <input type="number"
-                 id="adjustHeight"
-                 class="form-control"
-                 v-model="canvasHeight" />
-        </div>
-      </div>
     </div>
 
     <div class="controlSec my-3 row">
@@ -273,7 +274,7 @@
       font-size: 1.2rem;
     }
   </style>
-  <script src="./js/all.js"></script>
+  <script src="./js/ROI.js"></script>
 </body>
 
 <!-- <script>

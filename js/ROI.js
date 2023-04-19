@@ -306,8 +306,7 @@ const vm = Vue.createApp({
     },
     saveResult() {
       const vm = this;
-      const canvas = this.$refs.canvas;
-      canvas.toBlob((blob) => {
+      vm.canvasEntity.toBlob((blob) => {
         // 產生時間戳記
         const timestamp = Date.now().toString();
         // 建立一個 <a></a>
