@@ -115,6 +115,15 @@
                  v-model="canvasHeight" />
         </div>
       </div>
+      <div class="col-sm-3">
+        <label for="detectModeButton"
+               class="form-label">模式</label>
+        <button type="button"
+                id="detectModeButton"
+                class="d-block"
+                :class="detectModeStyle"
+                @click="toggleSmokeAndFlare">{{ detectModeComputed }}</button>
+      </div>
     </div>
     <div class="row mt-2">
       <div class="col-sm-3">
@@ -135,18 +144,18 @@
       </div>
       <div class="col-sm-3">
         <div class="resizeSec">
-          <label for="rectWidth"
-                 class="form-label">寬度 (px) </label>
-          <input type="number"
-                 id="rectWidth"
-                 class="form-control"
-                 v-model="rectWidthPixel" />
           <label for="rectHeight"
                  class="form-label">高度 (px) </label>
           <input type="number"
                  id="rectHeight"
                  class="form-control"
                  v-model="rectHeightPixel" />
+          <label for="rectWidth"
+                 class="form-label">寬度 (px) </label>
+          <input type="number"
+                 id="rectWidth"
+                 class="form-control"
+                 v-model="rectWidthPixel" />
         </div>
       </div>
       <div class="col-sm-3">
@@ -171,7 +180,7 @@
                  v-model="bottomShiftPixel" />
         </div>
       </div>
-      <div class="col-sm-3">
+      <!-- <div class="col-sm-3">
         <label for="outlineColor"
                class="form-label">文字框線顏色: </label>
         <select id="outlineColor"
@@ -192,9 +201,9 @@
             {{fontOption.weightName}}
           </option>
         </select>
-      </div>
+      </div> -->
     </div>
-    <div class="row mt-2">
+    <!-- <div class="row mt-2">
       <div class="col-sm-3">
         <div class="rotateSec">
           <label for="rotateDeg"
@@ -205,7 +214,7 @@
                  v-model="rotateDegree" />
         </div>
       </div>
-    </div>
+    </div> -->
 
     <div class="controlSec my-3 row">
       <!-- <div class="col-sm-1">
