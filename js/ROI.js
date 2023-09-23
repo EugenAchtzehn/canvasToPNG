@@ -12,8 +12,8 @@ const vm = Vue.createApp({
         { imagePoint: '照片範例3', imageFileName: 'SamplePicture3' },
         { imagePoint: '照片範例4_夜間', imageFileName: 'SamplePicture4_Night' },
       ],
-      canvasWidth: 1920,
-      canvasHeight: 1080,
+      canvasWidth: 704,
+      canvasHeight: 480,
       fontSize: 16,
       toTopPixel: 10,
       toLeftPixel: 10,
@@ -36,9 +36,28 @@ const vm = Vue.createApp({
       selectedPoint: 'default',
       vueCanvas: null,
       canvasEntity: null,
+      // 預設為 smoke, 可切換至 flare
+      detectMode: 'smoke',
     };
   },
   methods: {
+    toggleSmokeAndFlare() {
+      const vm = this;
+      switch (vm.detectMode) {
+        case 'smoke': {
+          vm.detectMode = 'flare';
+          vm.canvasWidth = 1920;
+          vm.canvasHeight = 1080;
+          break;
+        }
+        case 'flare': {
+          vm.detectMode = 'smoke';
+          vm.canvasWidth = 704;
+          vm.canvasHeight = 480;
+          break;
+        }
+      }
+    },
     getCoords(event) {
       const canvas = this.$refs.canvas;
 
@@ -334,6 +353,24 @@ const vm = Vue.createApp({
       const canvas = this.$refs.canvas;
       canvas.width = this.canvasWidth;
       canvas.height = this.canvasHeight;
+    },
+  },
+  computed: {
+    detectModeComputed() {
+      const vm = this;
+      if (vm.detectMode === 'flare') {
+        return '火光';
+      } else {
+        return '煙霧';
+      }
+    },
+    detectModeStyle() {
+      const vm = this;
+      if (vm.detectMode === 'flare') {
+        return 'btn btn-danger';
+      } else {
+        return 'btn btn-success';
+      }
     },
   },
   mounted() {
